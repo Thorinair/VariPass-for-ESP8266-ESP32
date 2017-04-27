@@ -50,4 +50,9 @@ double varipassReadFloat (String key, String id, int* status);
 bool   varipassReadBool  (String key, String id, int* status);
 String varipassReadString(String key, String id, int* status);
 
+/*
+*
+*/
+String handleResponse(int _answerStatus);
+
 #endif
