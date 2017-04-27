@@ -156,3 +156,47 @@ bool varipassReadBool(String key, String id, int* status) {
 String varipassReadString(String key, String id, int* status) {
     return varipassRead(key, id, status);
 }
+
+String handleResponse(int _answerStatus) {
+  String _status;
+
+  switch (_answerStatus) {
+    case -1: //VARIPASS_RESULT_ERROR_UNKNOWN
+      _status = "Unknown error has happened.";
+      break;
+
+    case 0: // VARIPASS_RESULT_SUCCESS
+      _status = "Data has been successfully written to Varipass database.";
+      break;
+
+    case 1: // VARIPASS_RESULT_ERROR_INVALID_KEY
+      _status = "Your unique key is invalid.";
+      break;
+
+    case 2: // VARIPASS_RESULT_ERROR_INVALID_ID
+      _status = "Your variable ID is invalid.";
+      break;
+
+    case 3: // VARIPASS_RESULT_ERROR_COOLDOWN
+      _status = "You are sending data too often. Check your Cooldown for this variable.";
+      break;
+
+    case 4: // VARIPASS_RESULT_ERROR_UNCONFIRMED
+      _status = "You email address is not yet confirmed. Click the link you have received.";
+      break;
+
+    case 5: // VARIPASS_RESULT_ERROR_BANNED
+      _status = "Your account has been banned from Varipass.";
+      break;
+
+    case 6: // VARIPASS_RESULT_ERROR_EMPTY_VARIABLE
+      _status = "You are sending a empty variable.";
+      break;
+
+    case 7: // VARIPASS_RESULT_ERROR_DB
+      _status = "There is an error with our database. Please try later.";
+      break;
+  }
+
+  return _status;
+}
