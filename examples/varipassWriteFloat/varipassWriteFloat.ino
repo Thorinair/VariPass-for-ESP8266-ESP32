@@ -25,18 +25,18 @@
 #include "ESP8266WiFi.h"
 #include <VariPass.h>
 
-const char* ssid     = "HUAWEI-Q4OG0D";  // enter your WiFi SSID
-const char* password = "8ZDMQngx"; // enter you WiFi password
+const char* ssid     = "SSID";  // enter your WiFi SSID
+const char* password = "pass"; // enter you WiFi password
 
 // At this point, you will need to add variable to your Varipass Dashboard.
 // It's simple to do, just click the + button and enter data
 
 // This is your unique ID key. You can find it by clicking chain icon
 // on your new created variable
-String myVaripassKey = "t3b0EoUrYEdF0KnB";
+String myVaripassKey = "Varipayy_key";
 
 // Just below the ID value, you will find ID value. Copy it here as well
-String varID = "GDBDCc3j";
+String varID = "variable_id";
 
 float var = 22.32; // variable for storing data
 int varipassResponseStatus; // storing Varipass response to your request
@@ -51,7 +51,7 @@ void setup() {
   }
 
   Serial.println("Successfully connected to WiFi network! This is local IP address: ");
-  Serial.println(WiFi.localIP()); // ispisuje lokalnu WiFi adresu NOVE
+  Serial.println(WiFi.localIP());
 }
 
 void loop() {
