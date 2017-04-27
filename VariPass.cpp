@@ -17,7 +17,13 @@
 
 #define HOST "api.varipass.org"
 
-String splitString(String data, char separator, int index) {
+static String splitString(String data, char separator, int index);
+static String request(String path, int duration);
+static void   varipassWrite(String key, String id, String value, int* status);
+static String varipassRead(String key, String id, int* status);
+
+
+static String splitString(String data, char separator, int index) {
     int found = 0;
     int strIndex[] = {0, -1};
     int maxIndex = data.length() - 1;
@@ -33,7 +39,7 @@ String splitString(String data, char separator, int index) {
     return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
-String request(String path) {
+static String request(String path, int duration) {
     WiFiClient client;
     if (!client.connect(HOST, 80)) {  
         Serial.println("Error connecting!");
@@ -43,7 +49,7 @@ String request(String path) {
     client.print("GET " + path + " HTTP/1.1\r\n" +
                  "Host: " + HOST + "\r\n" + 
                  "Connection: close\r\n\r\n");
-    delay(VARIPASS_DURATION);
+    delay(duration);
 
     String body = "";
     while(client.available()){
@@ -59,8 +65,8 @@ String request(String path) {
     return body;
 }
 
-void varipassWrite(String key, String id, String value, int* status) {
-    String response = request("/?key=" + key + "&action=swrite&id=" + id + "&value=" + value);
+static void varipassWrite(String key, String id, String value, int* status) {
+    String response = request("/?key=" + key + "&action=swrite&id=" + id + "&value=" + value, VARIPASS_DURATION_WRITE);
 
     if (response == "success")
         *status = VARIPASS_RESULT_SUCCESS;
@@ -101,8 +107,8 @@ void varipassWriteString(String key, String id, String value, int* status) {
     varipassWrite(key, id, value, status);
 }
 
-String varipassRead(String key, String id, int* status) {
-    String response = request("/?key=" + key + "&action=sread&id=" + id);
+static String varipassRead(String key, String id, int* status) {
+    String response = request("/?key=" + key + "&action=sread&id=" + id, VARIPASS_DURATION_READ);
 
     String result = splitString(response, '|', 0);
     if (result == "success") {
