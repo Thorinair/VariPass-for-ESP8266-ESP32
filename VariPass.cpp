@@ -1,7 +1,7 @@
 /*
     Library: VariPass for ESP8266
     Programmed by: Thorinair
-    Version: v1.0.0
+    Version: v1.0.1
     Description: Provides an API for easily exchanging data with the VariPass (varipass.org) website.
     Usage:  
         First add this library to the "libraries" folder in your Arduino workspace.
