@@ -58,7 +58,7 @@ void loop() {
 
   varipassWriteFloat(myVaripassKey, varID, var, &varipassResponseStatus);
 
-  Serial.println(handleResponse(varipassResponseStatus));
+  Serial.println(varipassGetResultDescription(varipassResponseStatus));
 
   delay(2500);
   var++;

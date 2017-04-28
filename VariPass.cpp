@@ -1,7 +1,7 @@
 /*
     Library: VariPass for ESP8266
     Programmed by: Thorinair
-    Version: v1.0.1
+    Version: v1.1.0
     Description: Provides an API for easily exchanging data with the VariPass (varipass.org) website.
     Usage:  
         First add this library to the "libraries" folder in your Arduino workspace.
@@ -65,138 +65,138 @@ static String request(String path, int duration) {
     return body;
 }
 
-static void varipassWrite(String key, String id, String value, int* status) {
+static void varipassWrite(String key, String id, String value, int* result) {
     String response = request("/?key=" + key + "&action=swrite&id=" + id + "&value=" + value, VARIPASS_DURATION_WRITE);
 
     if (response == "success")
-        *status = VARIPASS_RESULT_SUCCESS;
+        *result = VARIPASS_RESULT_SUCCESS;
     else if (response == "error_invalid_key")
-        *status = VARIPASS_RESULT_ERROR_INVALID_KEY;
+        *result = VARIPASS_RESULT_ERROR_INVALID_KEY;
     else if (response == "error_invalid_id")
-        *status = VARIPASS_RESULT_ERROR_INVALID_ID;
+        *result = VARIPASS_RESULT_ERROR_INVALID_ID;
     else if (response == "error_cooldown")
-        *status = VARIPASS_RESULT_ERROR_COOLDOWN;
+        *result = VARIPASS_RESULT_ERROR_COOLDOWN;
     else if (response == "error_unconfirmed")
-        *status = VARIPASS_RESULT_ERROR_UNCONFIRMED;
+        *result = VARIPASS_RESULT_ERROR_UNCONFIRMED;
     else if (response == "error_banned")
-        *status = VARIPASS_RESULT_ERROR_BANNED;
+        *result = VARIPASS_RESULT_ERROR_BANNED;
     else if (response == "error_empty_variable")
-        *status = VARIPASS_RESULT_ERROR_EMPTY_VARIABLE;
+        *result = VARIPASS_RESULT_ERROR_EMPTY_VARIABLE;
     else if (response == "error_db")
-        *status = VARIPASS_RESULT_ERROR_DB;
+        *result = VARIPASS_RESULT_ERROR_DB;
     else
-        *status = VARIPASS_RESULT_ERROR_UNKNOWN;  
+        *result = VARIPASS_RESULT_ERROR_UNKNOWN;  
 }
 
-void varipassWriteInt(String key, String id, long value, int* status) {
-    varipassWrite(key, id, String(value), status);
+void varipassWriteInt(String key, String id, long value, int* result) {
+    varipassWrite(key, id, String(value), result);
 }
 
-void varipassWriteFloat(String key, String id, double value, int* status) {
-    varipassWrite(key, id, String(value), status);
+void varipassWriteFloat(String key, String id, double value, int* result) {
+    varipassWrite(key, id, String(value), result);
 }
 
-void varipassWriteBool(String key, String id, bool value, int* status) {
+void varipassWriteBool(String key, String id, bool value, int* result) {
     String boolval = "false";
     if (value)
         boolval = "true";
-    varipassWrite(key, id, boolval, status);
+    varipassWrite(key, id, boolval, result);
 }
 
-void varipassWriteString(String key, String id, String value, int* status) {
-    varipassWrite(key, id, value, status);
+void varipassWriteString(String key, String id, String value, int* result) {
+    varipassWrite(key, id, value, result);
 }
 
-static String varipassRead(String key, String id, int* status) {
+static String varipassRead(String key, String id, int* result) {
     String response = request("/?key=" + key + "&action=sread&id=" + id, VARIPASS_DURATION_READ);
 
-    String result = splitString(response, '|', 0);
-    if (result == "success") {
-        *status = VARIPASS_RESULT_SUCCESS;
+    String responseResult = splitString(response, '|', 0);
+    if (responseResult == "success") {
+        *result = VARIPASS_RESULT_SUCCESS;
         return splitString(response, '|', 1);            
     }
     else {
         if (response == "error_invalid_key")
-            *status = VARIPASS_RESULT_ERROR_INVALID_KEY;
+            *result = VARIPASS_RESULT_ERROR_INVALID_KEY;
         else if (response == "error_invalid_id")
-            *status = VARIPASS_RESULT_ERROR_INVALID_ID;
+            *result = VARIPASS_RESULT_ERROR_INVALID_ID;
         else if (response == "error_cooldown")
-            *status = VARIPASS_RESULT_ERROR_COOLDOWN;
+            *result = VARIPASS_RESULT_ERROR_COOLDOWN;
         else if (response == "error_unconfirmed")
-            *status = VARIPASS_RESULT_ERROR_UNCONFIRMED;
+            *result = VARIPASS_RESULT_ERROR_UNCONFIRMED;
         else if (response == "error_banned")
-            *status = VARIPASS_RESULT_ERROR_BANNED;
+            *result = VARIPASS_RESULT_ERROR_BANNED;
         else if (response == "error_empty_variable")
-            *status = VARIPASS_RESULT_ERROR_EMPTY_VARIABLE;
+            *result = VARIPASS_RESULT_ERROR_EMPTY_VARIABLE;
         else if (response == "error_db")
-            *status = VARIPASS_RESULT_ERROR_DB;
+            *result = VARIPASS_RESULT_ERROR_DB;
         else
-            *status = VARIPASS_RESULT_ERROR_UNKNOWN;  
+            *result = VARIPASS_RESULT_ERROR_UNKNOWN;  
 
         return "";   
     }            
 }
 
-long varipassReadInt(String key, String id, int* status) {
-    return atol(varipassRead(key, id, status).c_str());
+long varipassReadInt(String key, String id, int* result) {
+    return atol(varipassRead(key, id, result).c_str());
 }
 
-double varipassReadFloat(String key, String id, int* status) {
-    return atof(varipassRead(key, id, status).c_str());
+double varipassReadFloat(String key, String id, int* result) {
+    return atof(varipassRead(key, id, result).c_str());
 }
 
-bool varipassReadBool(String key, String id, int* status) {
-    String value = varipassRead(key, id, status);
+bool varipassReadBool(String key, String id, int* result) {
+    String value = varipassRead(key, id, result);
     if (value == "true")
         return true;
     else
         return false;
 }
 
-String varipassReadString(String key, String id, int* status) {
-    return varipassRead(key, id, status);
+String varipassReadString(String key, String id, int* result) {
+    return varipassRead(key, id, result);
 }
 
-String handleResponse(int _answerStatus) {
-  String _status;
+String varipassGetResultDescription(int result) {
+    String description;
 
-  switch (_answerStatus) {
-    case -1: //VARIPASS_RESULT_ERROR_UNKNOWN
-      _status = "Unknown error has happened.";
-      break;
+    switch (result) {
+        case VARIPASS_RESULT_ERROR_UNKNOWN:
+            description = "An unknown error has occurred. Usually caused by timeouts.";
+            break;
 
-    case 0: // VARIPASS_RESULT_SUCCESS
-      _status = "Data has been successfully written to Varipass database.";
-      break;
+        case VARIPASS_RESULT_SUCCESS:
+            description = "Data has been successfully written or read from VariPass.";
+            break;
 
-    case 1: // VARIPASS_RESULT_ERROR_INVALID_KEY
-      _status = "Your unique key is invalid.";
-      break;
+        case VARIPASS_RESULT_ERROR_INVALID_KEY:
+            description = "Your API key is invalid.";
+            break;
 
-    case 2: // VARIPASS_RESULT_ERROR_INVALID_ID
-      _status = "Your variable ID is invalid.";
-      break;
+        case VARIPASS_RESULT_ERROR_INVALID_ID:
+            description = "Your variable ID is invalid.";
+            break;
 
-    case 3: // VARIPASS_RESULT_ERROR_COOLDOWN
-      _status = "You are sending data too often. Check your Cooldown for this variable.";
-      break;
+        case VARIPASS_RESULT_ERROR_COOLDOWN:
+            description = "You are sending data too often. Check the cooldown for this variable on your Dashboard.";
+            break;
 
-    case 4: // VARIPASS_RESULT_ERROR_UNCONFIRMED
-      _status = "You email address is not yet confirmed. Click the link you have received.";
-      break;
+        case VARIPASS_RESULT_ERROR_UNCONFIRMED:
+            description = "You email address is not yet confirmed. Click the link you have received in your inbox.";
+            break;
 
-    case 5: // VARIPASS_RESULT_ERROR_BANNED
-      _status = "Your account has been banned from Varipass.";
-      break;
+        case VARIPASS_RESULT_ERROR_BANNED:
+            description = "Your account has been banned from VariPass.";
+            break;
 
-    case 6: // VARIPASS_RESULT_ERROR_EMPTY_VARIABLE
-      _status = "You are sending a empty variable.";
-      break;
+        case VARIPASS_RESULT_ERROR_EMPTY_VARIABLE:
+            description = "The variable you are trying to read or write to is empty. Please contact support.";
+            break;
 
-    case 7: // VARIPASS_RESULT_ERROR_DB
-      _status = "There is an error with our database. Please try later.";
-      break;
-  }
+        case VARIPASS_RESULT_ERROR_DB:
+            description = "There is an error with the VariPass database. Please contact support.";
+            break;
+    }
 
-  return _status;
+    return description;
 }

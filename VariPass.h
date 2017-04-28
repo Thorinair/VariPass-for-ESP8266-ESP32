@@ -29,30 +29,34 @@
  * key:    User's API key which can be found on the website.
  * id:     ID of the variable to be written to.
  * value:  Value to write. Different types depending on function.
- * status: Reference to a status variable. Used to save the API results.
+ * result: Reference to a result variable. Used to save the API results.
  */
-void varipassWriteInt   (String key, String id, long   value, int* status);
-void varipassWriteFloat (String key, String id, double value, int* status);
-void varipassWriteBool  (String key, String id, bool   value, int* status);
-void varipassWriteString(String key, String id, String value, int* status);
+void varipassWriteInt   (String key, String id, long   value, int* result);
+void varipassWriteFloat (String key, String id, double value, int* result);
+void varipassWriteBool  (String key, String id, bool   value, int* result);
+void varipassWriteString(String key, String id, String value, int* result);
 
 /*
  * Functions used to read data from VariPass.
  *
  * key:    User's API key which can be found on the website.
  * id:     ID of the variable to be written to.
- * status: Reference to a status variable. Used to save the API results.
+ * result: Reference to a result variable. Used to save the API results.
  *
  * return: Value from VariPass. Different types depending on function.
  */
-long   varipassReadInt   (String key, String id, int* status);
-double varipassReadFloat (String key, String id, int* status);
-bool   varipassReadBool  (String key, String id, int* status);
-String varipassReadString(String key, String id, int* status);
+long   varipassReadInt   (String key, String id, int* result);
+double varipassReadFloat (String key, String id, int* result);
+bool   varipassReadBool  (String key, String id, int* result);
+String varipassReadString(String key, String id, int* result);
 
 /*
-*
-*/
-String handleResponse(int _answerStatus);
+ * Translates a certain API response to a readable description.
+ *
+ * result: The integer result to retrieve the string for.
+ *
+ * return: A descriptive string of an API result.
+ */
+String varipassGetResultDescription(int result);
 
 #endif
