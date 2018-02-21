@@ -18,7 +18,7 @@
 #define HOST "api.varipass.org"
 
 static String splitString(String data, char separator, int index);
-static String request(String path, int duration);
+static String request(String path);
 static void   varipassWrite(String key, String id, String value, int* status);
 static String varipassRead(String key, String id, int* status);
 
@@ -39,7 +39,7 @@ static String splitString(String data, char separator, int index) {
     return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
-static String request(String path, int duration) {
+static String request(String path) {
     WiFiClient client;
     if (!client.connect(HOST, 80)) {  
         Serial.println("Error connecting!");
@@ -49,24 +49,27 @@ static String request(String path, int duration) {
     client.print("GET " + path + " HTTP/1.1\r\n" +
                  "Host: " + HOST + "\r\n" + 
                  "Connection: close\r\n\r\n");
-    delay(duration);
 
     String body = "";
-    while(client.available()){
-        String line = client.readStringUntil('\n');
-        if (line.length() == 1) {
-            client.readStringUntil('\n');
-            body = client.readStringUntil('\n');
-            body.remove(body.length() - 1, 1);
-            break;
-        }
+
+    while (client.connected()) {
+		if (client.available())	{
+	        String line = client.readStringUntil('\n');
+	        if (line.length() == 1) {
+	            client.readStringUntil('\n');
+	            body = client.readStringUntil('\n');
+	            body.remove(body.length() - 1, 1);
+	            break;
+	        }
+		}
     }
+    client.stop();
 
     return body;
 }
 
 static void varipassWrite(String key, String id, String value, int* result) {
-    String response = request("/?key=" + key + "&action=swrite&id=" + id + "&value=" + value, VARIPASS_DURATION_WRITE);
+    String response = request("/?key=" + key + "&action=swrite&id=" + id + "&value=" + value);
 
     if (response == "success")
         *result = VARIPASS_RESULT_SUCCESS;
@@ -108,7 +111,7 @@ void varipassWriteString(String key, String id, String value, int* result) {
 }
 
 static String varipassRead(String key, String id, int* result) {
-    String response = request("/?key=" + key + "&action=sread&id=" + id, VARIPASS_DURATION_READ);
+    String response = request("/?key=" + key + "&action=sread&id=" + id);
 
     String responseResult = splitString(response, '|', 0);
     if (responseResult == "success") {

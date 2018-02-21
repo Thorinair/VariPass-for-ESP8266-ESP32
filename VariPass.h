@@ -19,10 +19,6 @@
 #define VARIPASS_RESULT_ERROR_EMPTY_VARIABLE 6
 #define VARIPASS_RESULT_ERROR_DB             7
 
-// Duration of a single request.
-#define VARIPASS_DURATION_WRITE 100
-#define VARIPASS_DURATION_READ  10
-
 /*
  * Functions used to send data to VariPass.
  *
