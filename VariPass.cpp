@@ -95,8 +95,8 @@ void varipassWriteInt(String key, String id, long value, int* result) {
     varipassWrite(key, id, String(value), result);
 }
 
-void varipassWriteFloat(String key, String id, double value, int* result) {
-    varipassWrite(key, id, String(value), result);
+void varipassWriteFloat(String key, String id, double value, int* result, char decimals) {
+    varipassWrite(key, id, String(value, decimals), result);
 }
 
 void varipassWriteBool(String key, String id, bool value, int* result) {

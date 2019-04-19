@@ -5,7 +5,7 @@ VariPass library for ESP8266 allows you to easily read and write data to the [Va
 The following functions are used to write data to VariPass. You should use the one which fits your variable type.
 ```
 void varipassWriteInt   (String key, String id, long   value, int* result);
-void varipassWriteFloat (String key, String id, double value, int* result);
+void varipassWriteFloat (String key, String id, double value, int* result, char decimals);
 void varipassWriteBool  (String key, String id, bool   value, int* result);
 void varipassWriteString(String key, String id, String value, int* result);
 ```

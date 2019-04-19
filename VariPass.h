@@ -28,7 +28,7 @@
  * result: Reference to a result variable. Used to save the API results.
  */
 void varipassWriteInt   (String key, String id, long   value, int* result);
-void varipassWriteFloat (String key, String id, double value, int* result);
+void varipassWriteFloat (String key, String id, double value, int* result, char decimals = 2);
 void varipassWriteBool  (String key, String id, bool   value, int* result);
 void varipassWriteString(String key, String id, String value, int* result);
 
