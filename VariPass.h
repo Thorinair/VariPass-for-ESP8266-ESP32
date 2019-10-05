@@ -18,6 +18,8 @@
 #define VARIPASS_RESULT_ERROR_BANNED         5
 #define VARIPASS_RESULT_ERROR_EMPTY_VARIABLE 6
 #define VARIPASS_RESULT_ERROR_DB             7
+#define VARIPASS_RESULT_ERROR_WIFI           8
+#define VARIPASS_RESULT_ERROR_CONNECT        9
 
 /*
  * Functions used to send data to VariPass.

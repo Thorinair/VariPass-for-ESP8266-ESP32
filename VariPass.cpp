@@ -13,9 +13,10 @@
 */
 
 #include "VariPass.h"
-#include "ESP8266WiFi.h"
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
 
-#define HOST "api.varipass.org"
+#define HOST "http://api.varipass.org"
 
 static String splitString(String data, char separator, int index);
 static String request(String path);
@@ -40,32 +41,23 @@ static String splitString(String data, char separator, int index) {
 }
 
 static String request(String path) {
-    WiFiClient client;
-    if (!client.connect(HOST, 80)) {  
-        Serial.println("Error connecting!");
-        return "";
-    }
+	if (WiFi.status() == WL_CONNECTED) {
+		HTTPClient http;
 
-    client.print("GET " + path + " HTTP/1.1\r\n" +
-                 "Host: " + HOST + "\r\n" + 
-                 "Connection: close\r\n\r\n");
+		http.begin(HOST + path);
 
-    String body = "";
+		int httpCode = http.GET();
+		if (httpCode != 200)
+	        return "error_connect";
 
-    while (client.connected()) {
-		if (client.available())	{
-	        String line = client.readStringUntil('\n');
-	        if (line.length() == 1) {
-	            client.readStringUntil('\n');
-	            body = client.readStringUntil('\n');
-	            body.remove(body.length() - 1, 1);
-	            break;
-	        }
-		}
-    }
-    client.stop();
+		String body = http.getString();
+		http.end();
 
-    return body;
+	    return body;
+	}
+	else {
+		return "error_wifi";
+	}
 }
 
 static void varipassWrite(String key, String id, String value, int* result) {
@@ -87,8 +79,13 @@ static void varipassWrite(String key, String id, String value, int* result) {
         *result = VARIPASS_RESULT_ERROR_EMPTY_VARIABLE;
     else if (response == "error_db")
         *result = VARIPASS_RESULT_ERROR_DB;
+    else if (response == "error_wifi")
+        *result = VARIPASS_RESULT_ERROR_WIFI;
+    else if (response == "error_connect")
+        *result = VARIPASS_RESULT_ERROR_CONNECT;
     else
-        *result = VARIPASS_RESULT_ERROR_UNKNOWN;  
+        *result = VARIPASS_RESULT_ERROR_UNKNOWN;
+
 }
 
 void varipassWriteInt(String key, String id, long value, int* result) {
@@ -133,8 +130,13 @@ static String varipassRead(String key, String id, int* result) {
             *result = VARIPASS_RESULT_ERROR_EMPTY_VARIABLE;
         else if (response == "error_db")
             *result = VARIPASS_RESULT_ERROR_DB;
+	    else if (response == "error_wifi")
+	        *result = VARIPASS_RESULT_ERROR_WIFI;
+	    else if (response == "error_connect")
+	        *result = VARIPASS_RESULT_ERROR_CONNECT;
         else
             *result = VARIPASS_RESULT_ERROR_UNKNOWN;  
+
 
         return "";   
     }            
@@ -198,6 +200,14 @@ String varipassGetResultDescription(int result) {
 
         case VARIPASS_RESULT_ERROR_DB:
             description = "There is an error with the VariPass database. Please contact support.";
+            break;
+
+        case VARIPASS_RESULT_ERROR_WIFI:
+            description = "The WiFi is not connected.";
+            break;
+
+        case VARIPASS_RESULT_ERROR_CONNECT:
+            description = "There was an error while connecting to VariPass.";
             break;
     }
 
