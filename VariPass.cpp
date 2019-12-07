@@ -1,7 +1,7 @@
 /*
     Library: VariPass for ESP8266
     Programmed by: Thorinair
-    Version: v1.1.0
+    Version: v1.2.0
     Description: Provides an API for easily exchanging data with the VariPass (varipass.org) website.
     Usage:  
         First add this library to the "libraries" folder in your Arduino workspace.
@@ -113,7 +113,7 @@ static String varipassRead(String key, String id, int* result) {
     String responseResult = splitString(response, '|', 0);
     if (responseResult == "success") {
         *result = VARIPASS_RESULT_SUCCESS;
-        return splitString(response, '|', 1);            
+        return splitString(response, '|', 1);
     }
     else {
         if (response == "error_invalid_key")
@@ -139,7 +139,7 @@ static String varipassRead(String key, String id, int* result) {
 
 
         return "";   
-    }            
+    }
 }
 
 long varipassReadInt(String key, String id, int* result) {
@@ -212,4 +212,46 @@ String varipassGetResultDescription(int result) {
     }
 
     return description;
+}
+
+Variable * varipassLatest(String key, int* count, int* result) {
+    String response = request("/?key=" + key + "&action=slatest");
+
+    String responseResult = splitString(response, '|', 0);
+    if (responseResult == "success") {
+        *result = VARIPASS_RESULT_SUCCESS;
+
+        *count = atoi(splitString(response, '|', 1).c_str());
+
+        Variable *variables = (Variable*) malloc(*count * sizeof(Variable));
+        for (int i = 0; i < *count; i++) {
+            splitString(response, '|', 2 + i*2).toCharArray(variables[i].id, 9);
+            splitString(response, '|', 3 + i*2).toCharArray(variables[i].value, 256);
+        }
+        return variables;
+    }
+    else {
+        if (response == "error_invalid_key")
+            *result = VARIPASS_RESULT_ERROR_INVALID_KEY;
+        else if (response == "error_invalid_id")
+            *result = VARIPASS_RESULT_ERROR_INVALID_ID;
+        else if (response == "error_cooldown")
+            *result = VARIPASS_RESULT_ERROR_COOLDOWN;
+        else if (response == "error_unconfirmed")
+            *result = VARIPASS_RESULT_ERROR_UNCONFIRMED;
+        else if (response == "error_banned")
+            *result = VARIPASS_RESULT_ERROR_BANNED;
+        else if (response == "error_empty_variable")
+            *result = VARIPASS_RESULT_ERROR_EMPTY_VARIABLE;
+        else if (response == "error_db")
+            *result = VARIPASS_RESULT_ERROR_DB;
+        else if (response == "error_wifi")
+            *result = VARIPASS_RESULT_ERROR_WIFI;
+        else if (response == "error_connect")
+            *result = VARIPASS_RESULT_ERROR_CONNECT;
+        else
+            *result = VARIPASS_RESULT_ERROR_UNKNOWN;  
+
+        return NULL;
+    }
 }

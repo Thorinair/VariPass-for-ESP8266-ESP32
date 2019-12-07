@@ -22,6 +22,18 @@
 #define VARIPASS_RESULT_ERROR_CONNECT        9
 
 /*
+ * Structure which defines a variable as returned by the varipassLatest function.
+ *
+ * id:     ID of the variable.
+ * value:  Value of the variable. The value is always of String type. 
+ *         Tt is up to the user to parse it.
+ */
+typedef struct Variable {
+    char id[9];
+    char value[256];
+} Variable;
+
+/*
  * Functions used to send data to VariPass.
  *
  * key:    User's API key which can be found on the website.
@@ -47,6 +59,19 @@ long   varipassReadInt   (String key, String id, int* result);
 double varipassReadFloat (String key, String id, int* result);
 bool   varipassReadBool  (String key, String id, int* result);
 String varipassReadString(String key, String id, int* result);
+
+/*
+ * Function used to return all latest data from VariPass.
+ *
+ * key:    User's API key which can be found on the website.
+ * count:  Reference to a count variable. Stores the number of variables that were returned. 
+ *         Zero on error result.
+ * result: Reference to a result variable. Used to save the API results.
+ *
+ * return: Pointer to an array of variable data. Will return null on error result.
+ *         WARNING: To avoid memory leaks, call free() after you are done using the data.
+ */
+Variable * varipassLatest(String key, int* count, int* result);
 
 /*
  * Translates a certain API response to a readable description.
