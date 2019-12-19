@@ -1,4 +1,4 @@
-# VariPass Library for ESP8266
+# VariPass Library for ESP8266 and ESP32
 VariPass library for ESP8266 allows you to easily read and write data to the [VariPass](https://varipass.org) website. The library should be used with the Arduino IDE.
 
 ## Available Functions

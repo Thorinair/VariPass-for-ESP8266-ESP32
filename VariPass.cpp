@@ -1,20 +1,26 @@
 /*
-    Library: VariPass for ESP8266
+    Library: VariPass for ESP8266 and ESP32
     Programmed by: Thorinair
-    Version: v1.2.0
+    Version: v1.3.0
     Description: Provides an API for easily exchanging data with the VariPass (varipass.org) website.
     Usage:  
         First add this library to the "libraries" folder in your Arduino workspace.
         Then, include the library in your program by calling #include <VariPass.h>.
         Please use VariPass.h file as reference for different functions and values.
     Requirements: 
-        This library requires you to have an ESP8266 based board.
+        This library requires you to have an ESP8266 or ESP32 based board.
         Your program needs to be connected to a WiFi for this library to work.
 */
 
 #include "VariPass.h"
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
+
+#ifdef ESP8266
+    #include <ESP8266WiFi.h>
+    #include <ESP8266HTTPClient.h>
+#elif ESP32
+    #include <WiFi.h>
+    #include <HTTPClient.h>
+#endif
 
 #define HOST "http://api.varipass.org"
 

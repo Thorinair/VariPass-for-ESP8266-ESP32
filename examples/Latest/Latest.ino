@@ -3,7 +3,11 @@
     Description: This example shows you how to retrieve the latest data from VariPass.
 */
 
-#include "ESP8266WiFi.h"
+#ifdef ESP8266
+    #include <ESP8266WiFi.h>
+#elif ESP32
+    #include <WiFi.h>
+#endif
 #include <VariPass.h>
 
 // WiFi settings
